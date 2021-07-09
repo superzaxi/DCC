@@ -1,0 +1,12 @@
+#===== Dot11 Include/Sources ================================================
+
+DOT11AH_DIR = $(TOP_DIR)/dot11/ah_version
+
+DOT11AH_INCLUDES = -I$(DOT11AH_DIR)
+
+DOT11AH_SRCS = \
+    $(DOT11AH_DIR)/dot11ah_mac.cpp \
+    $(DOT11AH_DIR)/dot11ah_mac_ap.cpp \
+    $(DOT11AH_DIR)/dot11ah_mac_sta.cpp \
+    $(DOT11AH_DIR)/dot11ah_phy.cpp \
+    $(DOT11AH_DIR)/dot11ah_info_interface.cpp \

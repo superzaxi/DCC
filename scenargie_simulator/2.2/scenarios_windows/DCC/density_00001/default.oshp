@@ -1,0 +1,7 @@
+# Format: name length[m] width[m] height[m] material(defined in ".material")
+
+# Car size reference:
+# http://www.jari.or.jp/Portals/0/resource/pdf/H23_simyu/%EF%BC%88Ver1.2%EF%BC%8920131010.pdf
+
+car 4.7 1.7 2.0 structure_default
+bigcar 12 2.5 3.8 structure_default

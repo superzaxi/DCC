@@ -1,0 +1,34 @@
+TOP_DIR = ..
+
+ARCH_NAME = linux
+
+
+#===== Module Options =====================================
+
+BASE_IPV6 = off
+BASE_ISCDHCP = off
+BASE_LIBPCAP = off
+BASE_PARALLELISM = off
+
+FUPM = off
+HFPM = off
+
+#===== Build Options =====================================
+
+CXX = g++
+CXXFLAGS = -std=c++11
+
+OPTS = -O3
+
+LIBS =
+
+SRCS = sim.cpp $(BASE_SRCS)
+
+OUR_INCLUDES = $(BASE_INCLUDES)
+
+PROGRAM = sim
+
+#===== Makefiles =====================================
+
+include $(TOP_DIR)/simulator/makefile.common
+include $(TOP_DIR)/simulator/makefile.util.linux

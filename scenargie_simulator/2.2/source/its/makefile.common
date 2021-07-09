@@ -1,0 +1,22 @@
+ITS_DIR = $(TOP_DIR)/its
+
+ITS_INCLUDES = \
+    $(ITSSIM_INCLUDE) \
+
+ITS_SRCS = \
+    $(ITSSIM_SRCS) \
+
+#===== ITS Extension Include/Sources ================================================
+
+ITSSIM_DIR = $(ITS_DIR)
+
+ITSSIM_INCLUDE = -I$(ITSSIM_DIR)
+
+ITSSIM_SRCS = \
+    $(ITSSIM_DIR)/its_app.cpp \
+    $(ITSSIM_DIR)/wave_app.cpp \
+    $(ITSSIM_DIR)/geonet_net.cpp \
+    $(ITSSIM_DIR)/t109_app.cpp \
+    $(ITSSIM_DIR)/t109_mac.cpp \
+    $(ITSSIM_DIR)/t109_phy.cpp \
+

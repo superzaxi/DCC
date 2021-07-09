@@ -1,0 +1,16 @@
+#===== Dot11 Include/Sources ================================================
+
+DOT11AD_DIR = $(TOP_DIR)/dot11/ad_version
+
+DOT11AD_INCLUDES = -I$(DOT11AD_DIR)
+
+DOT11AD_SRCS = \
+    $(DOT11AD_DIR)/dot11ad_mac.cpp \
+    $(DOT11AD_DIR)/dot11ad_mac_ap.cpp \
+    $(DOT11AD_DIR)/dot11ad_mac_sta.cpp \
+    $(DOT11AD_DIR)/dot11ad_phy.cpp \
+    $(DOT11AD_DIR)/dot11ad_info_interface.cpp \
+    $(DOT11AD_DIR)/dot11ad_scheduler.cpp \
+    $(DOT11AD_DIR)/dot11ad_ratecontrol.cpp \
+    $(DOT11AD_DIR)/dot11ad_effectivesinr.cpp \
+

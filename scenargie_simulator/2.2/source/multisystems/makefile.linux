@@ -1,0 +1,63 @@
+TOP_DIR = ..
+
+ARCH_NAME = linux
+
+
+#===== Module Options =====================================
+
+BASE_IPV6 = off
+BASE_ISCDHCP = off
+BASE_LIBPCAP = off
+BASE_PARALLELISM = off
+
+DOT11_MODULE = off
+DOT11_ADVANCED_MODULE = off
+ITS_MODULE = off
+LTE_MODULE = off
+DOT15_MODULE = off
+BLE_MODULE = off
+MULTIAGENT_MODULE = off
+
+FUPM = off
+HFPM = off
+
+#===== Build Options =====================================
+
+CXX = g++
+
+OPTS = -O3
+
+LIBS =
+
+SRCS = \
+    sim.cpp \
+    $(MULTI_SYSTEMS_SIM_SRCS) \
+    $(BASE_SRCS) \
+    $(DOT11_SRCS) \
+    $(DOT11AD_SRCS) $(DOT11AH_SRCS) \
+    $(ITS_SRCS) \
+    $(LTE_SRCS) \
+    $(DOT15_SRCS) \
+    $(BLE_SRCS) \
+    $(MULTIAGENT_SRCS)
+
+OUR_INCLUDES = \
+    $(MULTI_SYSTEMS_SIM_INCLUDES) \
+    $(BASE_INCLUDES) \
+    $(DOT11_INCLUDES) \
+    $(DOT11AD_INCLUDES) $(DOT11AH_INCLUDES) \
+    $(ITS_INCLUDES) \
+    $(LTE_INCLUDES) \
+    $(DOT15_INCLUDES) \
+    $(BLE_INCLUDES) \
+    $(MULTIAGENT_INCLUDES)
+
+PROGRAM = sim
+
+#===== Makefiles =====================================
+
+include makefile.common
+include makefile.util.linux
+
+include $(TOP_DIR)/simulator/makefile.common
+include $(TOP_DIR)/simulator/makefile.util.linux

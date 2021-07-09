@@ -1,0 +1,13 @@
+#===== MULTI_SYSTEMS_SIM Include/Sources ================================================
+
+MULTI_SYSTEMS_SIM_DIR = $(TOP_DIR)/multisystems
+
+MULTI_SYSTEMS_SIM_INCLUDES = -I$(MULTI_SYSTEMS_SIM_DIR)
+
+MULTI_SYSTEMS_SIM_SRCS = \
+    $(MULTI_SYSTEMS_SIM_DIR)/multisystems_netsim.cpp \
+    $(MULTI_SYSTEMS_SIM_DIR)/multisystems_node.cpp \
+    $(MULTI_SYSTEMS_SIM_DIR)/multisystems_network.cpp \
+    $(MULTI_SYSTEMS_SIM_DIR)/multisystems_mac_and_phy.cpp \
+    $(MULTI_SYSTEMS_SIM_DIR)/multisystems_prop.cpp \
+

@@ -1,0 +1,69 @@
+#===== Dot11 and ITS Option =====================================
+
+ifneq (,$(findstring on,${ITS_MODULE}))
+    OPTS += -DITS_EXTENSION
+
+    ifndef DOT11_MODULE
+        DOT11_MODULE=on
+    endif
+
+    ifndef BASE_IPV6
+        BASE_IPV6=on
+    endif
+
+    ifneq (,$(findstring on,${DOT11_MODULE}))
+        OPTS += -DDOT11
+        include $(TOP_DIR)/dot11/its_version/makefile_its.common
+        include $(TOP_DIR)/its/makefile.common
+        include $(TOP_DIR)/its/makefile.util.linux
+    else
+        $(error  Set "DOT11_MODULE=on" to use ITS_MODULE)
+    endif
+else
+    ifneq (,$(findstring on,${DOT11_MODULE}))
+        OPTS += -DDOT11
+        include $(TOP_DIR)/dot11/makefile.common
+    endif
+endif
+
+#===== Dot11 Advanced Option =====================================
+
+ifneq (,$(findstring on,${DOT11_ADVANCED_MODULE}))
+    OPTS += -DDOT11_ADVANCED_EXTENSION
+
+    include $(TOP_DIR)/dot11/ad_version/makefile.common
+    include $(TOP_DIR)/dot11/ah_version/makefile.common
+endif
+
+#===== LTE Option =====================================
+
+ifneq (,$(findstring on,${LTE_MODULE}))
+    OPTS += -DLTE
+
+    include $(TOP_DIR)/lte/makefile.common
+    include $(TOP_DIR)/lte/makefile.util.linux
+endif
+
+#===== Dot15 Option =====================================
+
+ifneq (,$(findstring on,${DOT15_MODULE}))
+    OPTS += -DDOT15
+
+    include $(TOP_DIR)/dot15/makefile.common
+endif
+
+#===== BLE Option =====================================
+
+ifneq (,$(findstring on,${BLE_MODULE}))
+    OPTS += -DBLE
+
+    include $(TOP_DIR)/ble/makefile.common
+endif
+
+#===== Multi Agent Option =====================================
+
+ifneq (,$(findstring on,${MULTIAGENT_MODULE}))
+    OPTS += -DMULTI_AGENT
+
+    include $(TOP_DIR)/multiagent/makefile.common
+endif

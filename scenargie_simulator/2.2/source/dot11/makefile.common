@@ -1,0 +1,15 @@
+#===== Dot11 Include/Sources ================================================
+
+DOT11_DIR = $(TOP_DIR)/dot11
+
+DOT11_INCLUDES = -I$(DOT11_DIR)
+
+DOT11_SRCS = \
+    $(DOT11_DIR)/dot11_mac.cpp \
+    $(DOT11_DIR)/dot11_mac_ap.cpp \
+    $(DOT11_DIR)/dot11_mac_sta.cpp \
+    $(DOT11_DIR)/dot11_phy.cpp \
+    $(DOT11_DIR)/dot11_info_interface.cpp \
+    $(DOT11_DIR)/dot11_ratecontrol.cpp \
+    $(DOT11_DIR)/dot11_effectivesinr.cpp \
+

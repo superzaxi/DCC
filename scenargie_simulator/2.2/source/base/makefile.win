@@ -1,0 +1,35 @@
+TOP_DIR = ..
+
+ARCH_NAME = windows
+
+
+#===== Module Options =====================================
+
+
+
+BASE_IPV6 = off
+BASE_ISCDHCP = off
+BASE_LIBPCAP = off
+BASE_PARALLELISM = off
+
+FUPM = off
+HFPM = off
+
+#===== Build Options =====================================
+
+CXX = cl
+
+OPTS = /O2 /MT
+
+LIBS =
+
+SRCS = sim.cpp $(BASE_SRCS)
+
+OUR_INCLUDES = $(BASE_INCLUDES)
+
+PROGRAM = sim.exe
+
+#===== Makefiles =====================================
+
+!INCLUDE $(TOP_DIR)/simulator/makefile.common
+!INCLUDE $(TOP_DIR)/simulator/makefile.util.win

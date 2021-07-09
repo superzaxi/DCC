@@ -1,0 +1,116 @@
+SPACE-TIME ENGINEERING, LLC
+SOFTWARE LICENSE AGREEMENT FOR SCENARGIE
+
+IMPORTANT NOTE: To the extent that this software may be used to reproduce materials, it is licensed to you only for reproduction of non-copyrighted materials, materials in which you own the copyright, or materials you are authorized or legally permitted to reproduce. If you are uncertain about your right to copy any material, you should contact your legal advisor.
+
+1. General
+
+The Scenargie software, tools, utilities, sample or example code, documentation, interfaces, content, data, and other materials accompanying this License, whether on disk, print or electronic documentation, in read only memory, or any other media or in any other form, (collectively the ÅgScenargie SoftwareÅh) are licensed, not sold, to you by Space-Time Engineering, LLC (ÅgSTEÅh) for use only under the terms of this License. STE and/or STEÅfs licensors retain ownership of the Scenargie Software itself and reserve all rights not expressly granted to you. The terms of this License will govern any software upgrades provided by STE that replace and/or supplement the original Scenargie Software, unless such upgrade is accompanied by a separate license in which case the terms of that license will govern.
+
+Title and intellectual property rights in and to any content displayed by or accessed through the Scenargie Software belongs to the respective content owner. Such content may be protected by copyright or other intellectual property laws and treaties, and may be subject to terms of use of the third party providing such content. This License does not grant you any rights to use such content nor does it guarantee that such content will continue to be available to you.
+
+2. Permitted License Uses and Restrictions
+
+Subject to the terms and conditions of this License, you are granted a limited, non-exclusive license to use the Scenargie Software on each computer owned or controlled by you. You may make only as many internal use copies of the Scenargie Software as reasonably necessary to use the Scenargie Software as permitted under this License, provided that you reproduce on each copy of the Scenargie Software or portion thereof, all copyright or other proprietary notices contained on the original.
+
+The grants set forth in this License do not permit you to, and you agree not to:
+
+a. modify, or create any derivative work of, the Scenargie Software or any part of the Scenargie Software provided in object code form, or use any files provided in source code form, or the algorithms and ideas therein, for purposes other than its intended functions as part of the Scenargie Software;
+
+b. adapt, translate, copy, or convert all or any part of the Scenargie Software in order to create software, a principal purpose of which is to perform the same or similar functions as the Scenargie Software;
+
+c. rent, lease, loan, or permit any third party to access the Scenargie Software or any portion of the Scenargie Software;
+
+d. use the Scenargie Software for supporting third partiesÅf use of the Scenargie Software, time share the Scenargie Software, or provide service bureau or similar service use;
+
+e. disassemble, decompile, reverse engineer the Scenargie Software, or otherwise attempt to gain access to its method of operation, or source code other than files provided in source code form by STE;
+
+f. sell, license, sublicense, publish, display, distribute, disseminate, assign, or otherwise transfer to a third party the Scenargie Software, any copy or portion thereof, or any License or other rights thereto, in whole or in part, without STEÅfs prior written consent;
+
+g. alter, remove, or obscure any copyright, trade secret, trademark, proprietary and/or other legal notices on or in copies of the Scenargie Software;
+
+h. access or use the Scenargie Software that you are not currently licensed to access or to use; and/or
+
+i. disclose your password and/or license file to a third party or allow them to be used.
+
+3. Services
+
+STE may provide Technical Support Service and Software Maintenance Service associated with the Scenargie Software. During the initial and/or any paid term of the Technical Support Service, you are entitled to receive assistance by electronic mail with the installation and/or use of the licensed Scenargie Software, and their interaction with supported hardware and operating systems (ÅgPlatformsÅh). You are also granted access to supplemental technical information and materials via STEÅfs website during the Technical Support Service term. During the initial and/or any paid term of the Software Maintenance Service, STE provides upgrades and subsequent releases of the Scenargie Software, if any, that are not charged separately.
+
+As part of the Technical Support Service, STE will exert reasonable efforts to provide, within a reasonable time, bug fixes, patches and/or workarounds for any material programming errors in the current release of the Scenargie Software that are directly attributable to STE, provided you provide STE with sufficient information to identify the errors.
+
+STE reserves the option to discontinue, in whole or in part, and at any time, offering these services for any Scenargie Software or Platform.
+
+4. Proprietary Rights
+
+You agree that the Scenargie Software and associated services contain trade secret, proprietary content, information and material that is owned by STE and its licensors, and is protected by applicable intellectual property and other laws, and that you will not use such trade secret, proprietary content, information or materials in any way whatsoever except for permitted use of the services or in any manner that is inconsistent with the terms of this License or that infringes any intellectual property rights of a third party or STE. Except to the extent expressly permitted in the applicable terms for the services, you agree not to disclose, reproduce, modify, rent, lease, lend, sell, distribute, or create derivative works based on the Scenargie Software and/or associated services, in any manner.
+
+5. License Management
+
+The Scenargie Software contains technology for the prevention of unlicensed use.  The Scenargie Software may collect, maintain, process and use diagnostic, technical, usage and related information, including but not limited to unique system or hardware identifiers, information about your computer, system and application software to verify compliance with the terms of this License.
+
+6. License Duration
+
+Your rights under this License will continue until the earlier of (a) termination by STE or you as provided below, or (b) such time as there is no Scenargie Software being licensed to you hereunder.
+
+6.1 Termed License
+You understand and agree that each Termed License will expire automatically immediately after the corresponding period of the term licensed, unless you renew its License by remitting the then-current Termed License fee.  You understand that the Scenargie Software will stop operating unless you pay the License fee.  You understand and agree that the Technical Support and/or the Software Maintenance Service for each Termed License will terminate automatically upon expiration of the Termed License term.
+
+6.2 Perpetual License
+You will have the right to use the Scenargie Software indefinitely, subject to the termination provisions under this License.  You understand and agree that the Technical Support and/or the Software Maintenance Service for each Perpetual License will terminate automatically upon expiration of the initial term included with the acquisition of the License. Thereafter, the Technical Support and/or the Software Maintenance Service may be renewed for the Scenargie Software, at the then-current price, and the then-applicable term, as long as STE offers such services for the Scenargie Software.
+
+7. Academic Qualification
+
+An Academic License is offered only to degree-granting educational institutions (ÅgEducational institutionsÅh) for the purposes of  (i) in the case of employees (faculty and academic staff), performing software administration, teaching, and noncommercial, academic research in their ordinary course as Educational institutionÅfs employees; and (ii) in the case of enrolled students, meeting classroom requirements of courses and study offered by the Educational institution.  Any other use is expressly prohibited.  As used herein, ÅgemployeesÅh exclude subcontractors and consultants of the Educational institution.  Research and development divisions and centers of Educational institutions, government agencies and other not-for-profit organizations do not qualify for the Academic License.
+
+8. Termination
+
+This License is effective until terminated. Your rights under this License will terminate automatically or cease to be effective without notice from STE if you fail to comply with any term(s) of this License, including failure to pay any License fees due. In addition, STE reserves the right to terminate this License if a new version of the Scenargie Software is released which is incompatible with this version of the Scenargie Software. Upon the termination of this License, you shall cease all use of the Scenargie Software and destroy all copies, full or partial, of the Scenargie Software. Section 3, 4, 8, 14 through 17 of this License shall survive any termination.
+
+9. Licenses for Third Party Software and Products
+
+STE has been granted licenses to distribute certain third party software either as part of the Scenargie Software or separate products under a separate license agreement. These licenses require STE to distribute the software to you subject to specific terms and conditions, which may be different from or additional to those contained herein. You agree that acceptance of this License also confirms your acceptance of any applicable third party software licenses. Such third party licenses may be shown when installing the Scenargie Software and/or included in the documentation.
+
+9.1 Use of MPEG-4
+THIS PRODUCT IS LICENSED UNDER THE MPEG-4 VISUAL PATENT PORTFOLIO LICENSE FOR THE PERSONAL AND NON-COMMERCIAL USE OF A CONSUMER FOR (i) ENCODING VIDEO IN COMPLIANCE WITH THE MPEG-4 VISUAL STANDARD (ÅgMPEG-4 VIDEOÅh) AND/OR (ii) DECODING MPEG-4 VIDEO THAT WAS ENCODED BY A CONSUMER ENGAGED IN A PERSONAL AND NON-COMMERCIAL ACTIVITY AND/OR WAS OBTAINED FROM A VIDEO PROVIDER LICENSED BY MPEG LA TO PROVIDE MPEG-4 VIDEO.  NO LICENSE IS GRANTED OR SHALL BE IMPLIED FOR ANY OTHER USE.  ADDITIONAL INFORMATION INCLUDING THAT RELATING TO PROMOTIONAL, INTERNAL AND COMMERCIAL USES AND LICENSING MAY BE OBTAINED FROM MPEG LA, LLC.  SEE HTTP://WWW.MPEGLA.COM.
+
+10. Export Control
+
+You may not use or otherwise export or re-export the Scenargie Software except as authorized by United States law and the laws of the jurisdiction(s) in which the Scenargie Software was obtained. In particular, but without limitation, the Scenargie Software may not be exported or re-exported (a) into any U.S. embargoed countries or (b) to anyone on the U.S. Treasury DepartmentÅfs list of Specially Designated Nationals or the U.S. Department of Commerce Denied PersonÅfs List or Entity List. By using the Scenargie Software, you represent and warrant that you are not located in any such country or on any such list. You also agree that you will not use the Scenargie Software for any purposes prohibited by United States law, including, without limitation, the development, design, manufacture or production of missiles, nuclear, chemical or biological weapons.
+
+11.  Federal Acquisition
+
+This provision applies to all acquisitions of the Scenargie Software and related documentation by, for, or through the federal government of the United States.  By accepting delivery of the Scenargie Software, the government hereby agrees that this software or documentation qualifies as commercial computer software or commercial computer software documentation as such terms are used or defined in FAR 12.212, DFARS Part 227.72, and DFARS 252.227-7014.  Accordingly, the terms and conditions of this License and only those rights specified in this License, shall pertain to and govern the use, modification, reproduction, release, performance, display, and disclosure of the Scenargie Software by the federal government (or other entity acquiring for or through the federal government) and shall supersede any conflicting contractual terms or conditions.  If this License fails to meet the governmentÅfs needs or is inconsistent in any respect with federal procurement law, the government agrees to return the Scenargie Software, unused, to STE.
+
+12. Taxes, Duties, Customs
+
+Absent appropriate exemption certificates or other conclusive proof of tax exempt status, you shall pay all applicable sales, use, excise, value-added, and other taxes, duties, levies, assessments, and governmental charges payable in connection with this License granted hereunder.
+
+13. Assignment
+
+You may not assign or otherwise transfer your rights and obligations to the Scenargie Software, in whole or in part, by operation of law or otherwise, without the written consent of STE. STE may charge you an administrative fee for any permitted assignment or transfer. In the case of any permitted assignment or transfer, (a) the transfer must include all of the Scenargie Software, including all its component parts and this License, (b) you do not retain any copies of the Scenargie Software, full or partial, including copies stored on a computer or other storage device, and (c) the party receiving the Scenargie Software accepts the terms and conditions of this License. You may not transfer any Scenargie Software that has been modified or replaced under Section 9. All components of the Scenargie Software are provided as part of a bundle and may not be separated from the bundle and distributed as standalone applications.
+
+14. Disclaimer of Warranties
+
+YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT, TO THE EXTENT PERMITTED BY APPLICABLE LAW, USE OF THE SCENARGIE SOFTWARE AND ANY SERVICES PERFORMED BY OR ACCESSED THROUGH THE SCENARGIE SOFTWARE IS AT YOUR SOLE RISK AND THAT THE ENTIRE RISK AS TO SATISFACTORY QUALITY, PERFORMANCE, ACCURACY AND EFFORT IS WITH YOU.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SCENARGIE SOFTWARE AND SERVICES ARE PROVIDED ÅgAS ISÅh AND ÅgAS AVAILABLE,Åh WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND, AND STE AND STEÅfS LICENSORS (COLLECTIVELY REFFERED TO AS ÅgSTEÅh FOR THE PURPOSES OF SECTIONS 14 AND 15) HEREBY DISCLAIM ALL WARRANTIES AND CONDITIONS WITH RESPECT TO THE SCENARGIE SOFTWARE AND SERVICES, EITHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES AND/OR CONDITIONS OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS.
+
+STE DOES NOT WARRANT THAT THE FUNCTIONS CONTAINED IN, OR SERVICES PERFORMED OR PROVIDED BY, THE SCENARGIE SOFTWARE WILL MEET YOUR REQUIREMENTS, THAT THE OPERATION OF THE SCENARGIE SOFTWARE OR SERVICES WILL BE UNINTERRUPTED OR ERROR-FREE, THAT ANY SERVICES WILL CONTINUE TO BE MADE AVAILABLE, THAT THE SCENARGIE SOFTWARE OR SERVICES WILL BE COMPATIBLE OR WORK WITH ANY THIRD PARTY SOFTWARE, APPLICATIONS OR THIRD PARTY SERVICES, OR THAT DEFECTS IN THE SCENARGIE SOFTWARE OR SERVICES WILL BE CORRECTED. INSTALLATION OF THIS SCENARGIE SOFTWARE MAY AFFECT THE USABILITY OF THIRD PARTY SOFTWARE, APPLICATIONS OR THIRD PARTY SERVICES.
+
+YOU FURTHER ACKNOWLEDGE THAT THE SCENARGIE SOFTWARE AND SERVICES ARE NOT INTENDED OR SUITABLE FOR USE IN SITUATIONS OR ENVIRONMENTS WHERE THE FAILURE OR TIME DELAYS OF, OR ERRORS OR INACCURACIES IN THE CONTENT, DATA OR INFORMATION PROVIDED BY, THE SCENARGIE SOFTWARE OR SERVICES COULD LEAD TO DEATH, PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE, INCLUDING WITHOUT LIMITATION THE OPERATION OF NUCLEAR FACILITIES, AIRCRAFT NAVIGATION OR COMMUNICATION SYSTEMS, AIR TRAFFIC CONTROL, LIFE SUPPORT OR WEAPONS SYSTEMS.
+
+NO ORAL OR WRITTEN INFORMATION OR ADVICE GIVEN BY STE SHALL CREATE A WARRANTY. SHOULD THE SCENARGIE SOFTWARE OR SERVICES PROVE DEFECTIVE, YOU ASSUME THE ENTIRE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES OR LIMITATIONS ON APPLICABLE STATUTORY RIGHTS OF A CONSUMER, SO THE ABOVE EXCLUSION AND LIMITATIONS MAY NOT APPLY TO YOU.
+
+15. Limitation of Liability
+
+TO THE EXTENT NOT PROHIBITED BY APPLICABLE LAW, IN NO EVENT SHALL STE BE LIABLE FOR PERSONAL INJURY, OR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER, INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, CORRUPTION OR LOSS OF DATA, FAILURE TO TRANSMIT OR RECEIVE ANY DATA OR INFORMATION, BUSINESS INTERRUPTION OR ANY OTHER COMMERCIAL DAMAGES OR LOSSES, ARISING OUT OF OR RELATED TO YOUR USE OR INABILITY TO USE THE SCENARGIE SOFTWARE OR SERVICES OR ANY THIRD PARTY SOFTWARE, APPLICATIONS, OR SERVICES IN CONJUNCTION WITH THE SCENARGIE SOFTWARE OR SERVICES, HOWEVER CAUSED, REGARDLESS OF THE THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE) AND EVEN IF STE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY FOR PERSONAL INJURY, OR OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION MAY NOT APPLY TO YOU. In no event shall STEÅfs total liability to you for all damages (other than as may be required by applicable law in cases involving personal injury) exceed the amount paid to STE under this License in the twelve (12) month period preceding the claim in question, for the Scenargie Software with respect to which the liability in question arises. The foregoing limitations will apply even if the above stated remedy fails of its essential purpose.
+
+16. Governing Law; Jurisdiction
+
+In the event a dispute arises between the parties out of or in connection with or with respect to this License or any breach thereof, such dispute shall be determined and settled by arbitration in Los Angeles County, California, in accordance with the rules of the American Arbitration Association (ÅgAAAÅh), and the laws of California shall be applied.  The award rendered by the arbitrator shall be final and binding on the parties, and judgment may be entered in any court of competent jurisdiction. STE and you shall each pay one-half of the costs and expenses of such arbitration, and each shall separately pay its counsel fees and expenses unless otherwise required by law.  Nothing in this Section shall prevent either party from applying to a court of competent jurisdiction for equitable or injunctive relief.  In any court action at law or equity that is brought by one of the parties to enforce or interpret the provisions of this License, the prevailing party will be entitled to reasonable attorneyÅfs fees, in addition to any other relief to which that party may be entitled. The parties agree that the United Nations Convention on Contracts for the International Sale of Goods shall not apply to this License. The parties further agree that the Uniform Computer Information Transactions Act, or any version thereof, adopted by any state, in any form (ÅgUCITAÅh), shall not apply to this Agreement.  To the extent that UCITA is applicable, the parties agree to opt out of the applicability of UCITA pursuant to the Opt-Out provision(s) contained therein.
+
+17. Entire Agreement
+
+This License constitutes the entire agreement between you and STE relating to the use of the Scenargie Software licensed hereunder and supersedes all prior or contemporaneous understandings regarding such subject matter. No amendment to or modification of this License will be binding unless in writing and signed by STE.
+

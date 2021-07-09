@@ -1,0 +1,38 @@
+TOP_DIR = ..
+
+ARCH_NAME = linux
+
+
+#===== Module Options =====================================
+
+BASE_IPV6 = on
+BASE_ISCDHCP = off
+BASE_LIBPCAP = off
+BASE_PARALLELISM = off
+
+FUPM = off
+HFPM = off
+
+#===== Build Options =====================================
+
+CXX = g++
+
+OPTS = -O3
+
+LIBS =
+
+SRCS = sim.cpp $(BASE_SRCS) $(DOT11_SRCS) $(ITS_SRCS)
+
+OUR_INCLUDES = $(BASE_INCLUDES) $(DOT11_INCLUDES) $(ITS_INCLUDES)
+
+PROGRAM = sim
+
+#===== Makefiles =====================================
+
+include makefile.common
+include makefile.util.linux
+
+include $(TOP_DIR)/dot11/its_version/makefile_its.common
+
+include $(TOP_DIR)/simulator/makefile.common
+include $(TOP_DIR)/simulator/makefile.util.linux

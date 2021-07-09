@@ -1,0 +1,12 @@
+# Format1: name ConstantCoefficient [reflection coefficient] [transmission coefficient]
+# Format2: name DielectricHalfSpace permittivity conductivity[S/m] roughness
+# Format3: name LayeredDielectric permittivity conductivity[S/m] roughness thickness[m]
+# Format4: name PECBackedDielectric permittivity conductivity[S/m] roughness thickness[m]
+# Format5: name PerfectElectricalConductor roughness thickness[m]
+# Format6: name Cost231Indoor loss[dB]
+# max size of name = 32
+
+terrain_default DielectricHalfSpace 20.0 0.02 0.0
+structure_default LayeredDielectric 7.0 0.0015 0.0 0.3
+
+wall_default Cost231Indoor 10
