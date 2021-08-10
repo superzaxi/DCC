@@ -22,6 +22,9 @@ void UdpProtocol::ConnectToNetworkLayer(const shared_ptr<NetworkLayer>& initNetw
     networkLayerPtr->RegisterPacketHandlerForProtocol(IP_PROTOCOL_NUMBER_UDP, shared_from_this());
 }
 
+/*void UdpProtocol::SendNodeIdTransport(NodeId theNodeId){
+    networkLayerPtr->SendNodeIdNetwork(theNodeId);
+}*/
 
 void UdpProtocol::SendPacket(
     unique_ptr<Packet>& packetPtr,
@@ -74,7 +77,7 @@ void UdpProtocol::SendPacket(
         priority,
         IP_PROTOCOL_NUMBER_UDP);
 
-    cout << "sendpacket" << endl;
+    //cout << "sendpacket" << endl;//no
 }//SendPacket//
 
 

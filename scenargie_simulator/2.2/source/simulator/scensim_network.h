@@ -1861,6 +1861,7 @@ void BasicNetworkLayer::ReceivePacketFromUpperLayer(
     }else if(trafficClass == 4){
         cout << "D3" << endl;
     }*/
+    //cout << "network: " << GetNodeId() << endl;
     //insert queue
     (*this).ReceivePacketFromUpperLayer(
         packetPtr, NetworkAddress::anyAddress, destinationAddress, trafficClass, protocol);

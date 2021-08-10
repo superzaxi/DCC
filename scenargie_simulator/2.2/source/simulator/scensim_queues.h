@@ -18,11 +18,13 @@
 #include "scensim_packet.h"
 
 #include <iostream>//20210613
+#include <map>
 
 namespace ScenSim {
 
 using std::cout;//20210613
 using std::endl;//20210613
+using std::map;
 
 typedef unsigned short EtherTypeField;
 
@@ -64,9 +66,7 @@ public:
         const PacketPriority priority,
         EnqueueResultType& enqueueResult,
         unique_ptr<Packet>& packetToDropPtr,
-        const EtherTypeField etherType = ETHERTYPE_IS_NOT_SPECIFIED){
-            //cout << "Insert_virtual" << endl;//no
-        }
+        const EtherTypeField etherType = ETHERTYPE_IS_NOT_SPECIFIED) = 0;
 
     virtual void InsertWithFullPacketInformation(
         unique_ptr<Packet>& packetPtr,
@@ -79,10 +79,7 @@ public:
         const PacketPriority priority,
         const unsigned short int ipv6FlowLabel,
         EnqueueResultType& enqueueResult,
-        unique_ptr<Packet>& packetToDropPtr) { 
-            assert(false); abort(); 
-            //cout << "Insertwith" << endl;//no
-        }
+        unique_ptr<Packet>& packetToDropPtr) { assert(false); abort(); }
 
     virtual PacketPriority MaxPossiblePacketPriority() const { return MAX_AVAILABLE_PACKET_PRIORITY; }
 
@@ -200,7 +197,6 @@ void FifoInterfaceOutputQueue::Insert(
     unique_ptr<Packet>& packetToDrop,
     const EtherTypeField etherType)
 {
-    //cout << "Insert1" << endl;//no
 
     assert((maxNumberPackets == 0) || (theQueue.size() <= maxNumberPackets));
     assert((maxNumberBytes == 0) || (currentNumberBytes <= maxNumberBytes));
@@ -231,7 +227,6 @@ void FifoInterfaceOutputQueue::DequeuePacket(
     PacketPriority& priority,
     EtherTypeField& etherType)
 {
-    //cout << "fifo" << endl;//no
     assert(!theQueue.empty());
 
     OutputQueueRecord& queueRecord = theQueue.front();
@@ -388,6 +383,9 @@ public:
 class OutputQueueWithPrioritySubqueues: public AbstractOutputQueueWithPrioritySubqueues {
 public:
 
+    map<NodeId, long int> actualSendCAMCount, actualSendCPMCount, expireCount;
+    int r1flag = 0, r2flag = 0, r3flag = 0; 
+
     OutputQueueWithPrioritySubqueues(
         const ParameterDatabaseReader& theParameterDatabaseReader,
         const InterfaceId& theInterfaceId,
@@ -423,15 +421,13 @@ public:
     virtual bool HasPacketWithPriority(const PacketPriority priority) const override
     {
         assert(priority <= maximumPriority);
-        //return (!outputSubqueues.at(priority).fifoQueue.empty());
-        return (!outputSubqueues.at(priority).priorityQueue.empty());
+        return (!outputSubqueues.at(priority).fifoQueue.empty());
     }
 
     virtual unsigned int NumberPacketsWithPriority(const PacketPriority priority) const override
     {
         assert(priority <= maximumPriority);
-        //return (static_cast<unsigned int>(outputSubqueues.at(priority).fifoQueue.size()));
-        return (static_cast<unsigned int>(outputSubqueues.at(priority).priorityQueue.size()));
+        return (static_cast<unsigned int>(outputSubqueues.at(priority).fifoQueue.size()));
     }
 
     virtual unsigned long long int NumberPacketBytesForPriority(const PacketPriority priority) const override
@@ -587,8 +583,7 @@ private:
         // Warning: Records are owned by "fifoQueue" and raw pointers are used in
         // "destinationSpecificInfos"
 
-        //std::deque<unique_ptr<OutputQueueRecordType> > fifoQueue;
-        std::deque<unique_ptr<OutputQueueRecordType> > priorityQueue;//dcc
+        std::deque<unique_ptr<OutputQueueRecordType> > fifoQueue;
 
         map<NetworkAddress, DestinationSpecificInfoType> destinationSpecificInfos;
 
@@ -596,8 +591,7 @@ private:
 
         void operator=(OutputSubqueueInfoType&& right) {
             currentNumberBytes = right.currentNumberBytes;
-            //fifoQueue = move(right.fifoQueue);
-            priorityQueue = move(right.priorityQueue);
+            fifoQueue = move(right.fifoQueue);
             destinationSpecificInfos = move(right.destinationSpecificInfos);
         }
 
@@ -657,8 +651,6 @@ OutputQueueWithPrioritySubqueues::OutputQueueWithPrioritySubqueues(
             theParameterDatabaseReader.ReadNonNegativeBigInt("interface-output-queue-max-bytes-per-subq", theNodeId, theInterfaceId);
     }//if//
 
-    //cout << "OutputQueueWithPrioritySubqueues" << endl;//yes (before flooding) 
-
 }//OutputQueueWithPrioritySubqueues()/
 
 
@@ -666,13 +658,9 @@ inline
 const Packet& OutputQueueWithPrioritySubqueues::TopPacket(const PacketPriority priority) const
 {
     assert(priority < outputSubqueues.size());
-    //assert(!outputSubqueues[priority].fifoQueue.empty());
-    assert(!outputSubqueues[priority].priorityQueue.empty());
+    assert(!outputSubqueues[priority].fifoQueue.empty());
 
-    //cout << "TopPacket" << endl;//no
-
-    //return (*outputSubqueues[priority].fifoQueue.front()->packetPtr);
-    return (*outputSubqueues[priority].priorityQueue.front()->packetPtr);
+    return (*outputSubqueues[priority].fifoQueue.front()->packetPtr);
 }
 
 
@@ -681,13 +669,9 @@ const NetworkAddress& OutputQueueWithPrioritySubqueues::NextHopAddressForTopPack
     const PacketPriority priority) const
 {
     assert(priority < outputSubqueues.size());
-    //assert(!outputSubqueues[priority].fifoQueue.empty());
-    assert(!outputSubqueues[priority].priorityQueue.empty());
+    assert(!outputSubqueues[priority].fifoQueue.empty());
 
-    //cout << "NextHopAddressForTopPacket" << endl;//no
-
-    //return (outputSubqueues[priority].fifoQueue.front()->nextHopAddress);
-    return (outputSubqueues[priority].priorityQueue.front()->nextHopAddress);
+    return (outputSubqueues[priority].fifoQueue.front()->nextHopAddress);
 }
 
 inline
@@ -735,8 +719,6 @@ NetworkAddress OutputQueueWithPrioritySubqueues::GetNetworkAddressOfNextActiveSt
 
     }//while//
 
-    //cout << "GetNetworkAddressOfNextActiveStationAfter" << endl;//no
-
     assert(false); abort();  return (NetworkAddress());
 
 }//GetNetworkAddressOfNextActiveStationAfter//
@@ -758,8 +740,6 @@ bool OutputQueueWithPrioritySubqueues::HasPacketWithPriorityAndNextHop(
         return false;
     }//if//
 
-    //cout << "HasPacketWithPriorityAndNextHop" << endl;//no
-
     return (!iter->second.aQueue.empty());
 
 }//HasPacketWithPriorityAndNextHop//
@@ -775,20 +755,16 @@ const Packet& OutputQueueWithPrioritySubqueues::GetNextPacketWithPriorityAndNext
     const OutputSubqueueInfoType& outputSubqueue = outputSubqueues.at(priority);
 
     if (!nextHopSpecificQueuesAreEnabled) {
-        //assert((outputSubqueue.fifoQueue.front()->nextHopAddress == nextHopAddress) &&
-        assert((outputSubqueue.priorityQueue.front()->nextHopAddress == nextHopAddress) &&
+        assert((outputSubqueue.fifoQueue.front()->nextHopAddress == nextHopAddress) &&
                "Access must be strictly FIFO without destination specific queues.");
 
-        //return (*outputSubqueue.fifoQueue.front()->packetPtr);
-        return (*outputSubqueue.priorityQueue.front()->packetPtr);
+        return (*outputSubqueue.fifoQueue.front()->packetPtr);
     }//if//
 
     typedef map<NetworkAddress, DestinationSpecificInfoType>::const_iterator IterType;
 
     const IterType iter = outputSubqueue.destinationSpecificInfos.find(nextHopAddress);
     assert(iter != outputSubqueue.destinationSpecificInfos.end());
-
-    //cout << "GetNextPacketWithPriorityAndNextHop" << endl;//no
 
     return (*iter->second.aQueue.front()->packetPtr);
 
@@ -806,20 +782,14 @@ bool OutputQueueWithPrioritySubqueues::NextPacketIsARetry(
     const OutputSubqueueInfoType& outputSubqueue = outputSubqueues.at(priority);
 
     if (!nextHopSpecificQueuesAreEnabled) {
-        //assert((outputSubqueue.fifoQueue.front()->nextHopAddress == nextHopAddress) &&
-        assert((outputSubqueue.priorityQueue.front()->nextHopAddress == nextHopAddress) &&
+        assert((outputSubqueue.fifoQueue.front()->nextHopAddress == nextHopAddress) &&
                "Access must be strictly FIFO without destination specific queues.");
 
-        /*if (outputSubqueue.fifoQueue.empty()) {
-            return false;
-        }//if//*/
-
-        if (outputSubqueue.priorityQueue.empty()) {
+        if (outputSubqueue.fifoQueue.empty()) {
             return false;
         }//if//
 
-        //return (outputSubqueue.fifoQueue.front()->retryTxCount > 0);
-        return (outputSubqueue.priorityQueue.front()->retryTxCount > 0);
+        return (outputSubqueue.fifoQueue.front()->retryTxCount > 0);
     }//if//
 
     typedef map<NetworkAddress, DestinationSpecificInfoType>::const_iterator IterType;
@@ -831,8 +801,6 @@ bool OutputQueueWithPrioritySubqueues::NextPacketIsARetry(
 
         return false;
     }//if//
-
-    //cout << "NextPacketWithPriorityAndNextHop" << endl;//no
 
     return (iter->second.aQueue.front()->retryTxCount > 0);
 
@@ -849,35 +817,25 @@ void OutputQueueWithPrioritySubqueues::Insert(
     unique_ptr<Packet>& packetToDrop,
     const EtherTypeField etherType)
 {
-    //cout << "Insert2" << endl;//yes
-    //cout << "ippriority: " << (int)ipPriority << endl;
-    /*for(int i = 0; i < outputSubqueues.size(); ++i){
-        cout << "queue: " << i << endl; //size=4
-    }*/
+    //dcc
+    const NodeId theNodeId = simEngineInterfacePtr->GetNodeId();
 
     PacketPriority priority = ipPriority;
-    //cout << "Insert3" << endl;
-    /*if (priorityMapperPtr != nullptr) {
+    if (priorityMapperPtr != nullptr) {
         priority = priorityMapperPtr->MapIpToMacPriority(ipPriority);
-    }//if//*/
-    //cout << "Insert4" << endl;
+    }//if//
 
     OutputSubqueueInfoType& queueInfo = outputSubqueues.at(priority);
-    //cout << "Insert5" << endl;
-    //cout << "priority: " << priority << endl;
-    //cout << "priority_int: " << (int)priority << endl;
-    //if ((subqueueMaxPackets != 0) && (queueInfo.fifoQueue.size() >= subqueueMaxPackets)) {
-    if ((subqueueMaxPackets != 0) && (queueInfo.priorityQueue.size() >= subqueueMaxPackets)) {
+
+    if ((subqueueMaxPackets != 0) && (queueInfo.fifoQueue.size() >= subqueueMaxPackets)) {
         enqueueResult = ENQUEUE_FAILURE_BY_MAX_PACKETS;
         packetToDrop = move(packetPtr);
-        cout << "packet overflow" << endl;
     }
     else if ((subqueueMaxBytes != 0) &&
              ((queueInfo.currentNumberBytes + packetPtr->LengthBytes()) > subqueueMaxBytes)) {
 
         enqueueResult = ENQUEUE_FAILURE_BY_MAX_BYTES;
         packetToDrop = move(packetPtr);
-        cout << "byte overflow" << endl;
     }
     else {
         enqueueResult = ENQUEUE_SUCCESS;
@@ -886,34 +844,25 @@ void OutputQueueWithPrioritySubqueues::Insert(
         queueInfo.currentNumberBytes += packetPtr->LengthBytes();
         totalPackets++;
         const SimTime currentTime = simEngineInterfacePtr->CurrentTime();
-        //queueInfo.fifoQueue.push_back(
-        cout << "priority_insert_before: " << (int)priority << ", queuesize_insert_before: " << queueInfo.priorityQueue.size() << endl;
-        queueInfo.priorityQueue.push_back(
+        //cout << "insert: " << (int)ipPriority << ", size: " << packetPtr->LengthBytes() << endl;
+        if(r1flag == 0){
+            actualSendCAMCount[theNodeId] = 0;
+            actualSendCPMCount[theNodeId] = 0;
+            expireCount[theNodeId] = 0;
+            r1flag = 1;
+        }
+        queueInfo.fifoQueue.push_back(
             unique_ptr<OutputQueueRecordType>(
                 new OutputQueueRecordType(packetPtr, nextHopAddress, etherType, currentTime)));
-        cout << "priority_insert_after: " << (int)priority << ", queuesize_insert_after: " << queueInfo.priorityQueue.size() << endl;
+
         if (nextHopSpecificQueuesAreEnabled) {
 
             // Also add to destination specific queue.
 
             queueInfo.destinationSpecificInfos[nextHopAddress].aQueue.push_back(
-                //queueInfo.fifoQueue.back().get());
-                queueInfo.priorityQueue.back().get());
+                queueInfo.fifoQueue.back().get());
         }//if//
     }//if//
-    //cout << "Insert6" << endl;
-    //cout << queueInfo.fifoQueue.size() << endl;
-    //DCC queue
-    /*if(priority == 1){
-        cout << "A" << endl;
-    }else if(priority == 2){
-        cout << "B" << endl;
-    }else if(priority == 3){
-        cout << "C" << endl;
-    }else if(priority == 4){
-        cout << "D" << endl;
-    }*/
-    //DCC queue
 
 }//Insert//
 
@@ -936,8 +885,7 @@ void OutputQueueWithPrioritySubqueues::RequeueAtFront(
 
     //Can overstuff
 
-    //queueInfo.fifoQueue.push_front(
-    queueInfo.priorityQueue.push_front(
+    queueInfo.fifoQueue.push_front(
         unique_ptr<OutputQueueRecordType>(
             new OutputQueueRecordType(
                 packetPtr, nextHopAddress, etherType,
@@ -950,13 +898,10 @@ void OutputQueueWithPrioritySubqueues::RequeueAtFront(
     if (nextHopSpecificQueuesAreEnabled) {
         // Also add to destination specific.
         queueInfo.destinationSpecificInfos[nextHopAddress].aQueue.push_front(
-            //queueInfo.fifoQueue.front().get());
-            queueInfo.priorityQueue.front().get());
+            queueInfo.fifoQueue.front().get());
     }//if//
 
     assert(packetPtr == nullptr);
-
-    //cout << "InsertAtFront" << endl;//no
 
 }//InsertAtFront//
 
@@ -975,12 +920,15 @@ void OutputQueueWithPrioritySubqueues::DequeuePacketWithPriority(
 {
     assert(priority < outputSubqueues.size());
 
-    //cout << "priority_max_size: " << outputSubqueues.size() << endl;//size = 4
+    //cout << "dequeue: " << (int)priority << endl;
+    //cout << "dequeue: " << (int)priority << ", size: " << packetPtr->LengthBytes() << endl;
+
+    const SimTime currentTime = simEngineInterfacePtr->CurrentTime();
+    const NodeId theNodeId = simEngineInterfacePtr->GetNodeId();
 
     OutputSubqueueInfoType& queueInfo = outputSubqueues.at(priority);
 
-    //OutputQueueRecordType& queueRecord = *queueInfo.fifoQueue.front();
-    OutputQueueRecordType& queueRecord = *queueInfo.priorityQueue.front();
+    OutputQueueRecordType& queueRecord = *queueInfo.fifoQueue.front();
     packetPtr = move(queueRecord.packetPtr);
     nextHopAddress = queueRecord.nextHopAddress;
     etherType = queueRecord.etherType;
@@ -989,14 +937,16 @@ void OutputQueueWithPrioritySubqueues::DequeuePacketWithPriority(
     retryTxCount = queueRecord.retryTxCount;
     sequenceNumber = queueRecord.sequenceNumber;
 
+    //dcc
+    //cout << "delay: " << currentTime - queueInsertionTime << ", current: " << currentTime << ", inserttime: " << queueInsertionTime << endl;
+
     if (nextHopSpecificQueuesAreEnabled) {
 
         DestinationSpecificInfoType& destinationInfo =
             queueInfo.destinationSpecificInfos[nextHopAddress];
         std::deque<OutputQueueRecordType*>& destSpecificQueue = destinationInfo.aQueue;
 
-        //assert(destSpecificQueue.front() == queueInfo.fifoQueue.front().get());
-        assert(destSpecificQueue.front() == queueInfo.priorityQueue.front().get());
+        assert(destSpecificQueue.front() == queueInfo.fifoQueue.front().get());
         destSpecificQueue.pop_front();
 
         if (destSpecificQueue.empty()) {
@@ -1004,11 +954,20 @@ void OutputQueueWithPrioritySubqueues::DequeuePacketWithPriority(
         }//if//
     }//if//
 
-    //queueInfo.fifoQueue.pop_front();
-    cout << "priority_dequeue_before: " << (int)priority << ", queuesize_dequeue_before: " << queueInfo.priorityQueue.size() << endl;
-    queueInfo.priorityQueue.pop_front();
-    cout << "priority_dequeue_after: " << (int)priority << ", queuesize_dequeue_after: " << queueInfo.priorityQueue.size() << endl;
-    //cout << "DequeuePacketWithPriority" << endl;//yes
+    queueInfo.fifoQueue.pop_front();
+
+    if(packetPtr->LengthBytes() == 328){
+        actualSendCAMCount[theNodeId]++;
+        //cout << "sendcam" << endl;
+    }else{
+        actualSendCPMCount[theNodeId]++;
+        //cout << "sendcpm" << endl;
+    }
+    if(currentTime >= 109700000000 && r2flag == 0){
+        cout << "actualSendCAMCount: " << actualSendCAMCount[theNodeId] << ", at: " << theNodeId << endl;
+        cout << "actualSendCPMCount: " << actualSendCPMCount[theNodeId] << ", at: " << theNodeId << endl;
+        r2flag = 1;
+    }
 
     queueInfo.currentNumberBytes -= packetPtr->LengthBytes();
     totalPackets--;
@@ -1017,11 +976,8 @@ void OutputQueueWithPrioritySubqueues::DequeuePacketWithPriority(
     // Cleanup:
 
     if (nextHopSpecificQueuesAreEnabled) {
-        /*while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
+        while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
             queueInfo.fifoQueue.pop_front();
-        }//while//*/
-        while((!queueInfo.priorityQueue.empty()) && (queueInfo.priorityQueue.front()->packetPtr == nullptr)) {
-            queueInfo.priorityQueue.pop_front();
         }//while//
     }//if//
 
@@ -1087,17 +1043,9 @@ void OutputQueueWithPrioritySubqueues::DequeuePacketWithPriorityAndNextHop(
 
     // Cleanup
 
-    /*while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
+    while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
         queueInfo.fifoQueue.pop_front();
-        //cout << "DequeuePacketWithPriorityAndNextHop" << endl;//no
-    }//while//*/
-
-    while((!queueInfo.priorityQueue.empty()) && (queueInfo.priorityQueue.front()->packetPtr == nullptr)) {
-        queueInfo.priorityQueue.pop_front();
-        //cout << "DequeuePacketWithPriorityAndNextHop" << endl;//no
     }//while//
-
-    //cout << "DequeuePacketWithPriorityAndNextHop" << endl;//no
 
 }//DequeuePacketWithPriorityAndNextHop//
 
@@ -1110,13 +1058,11 @@ void OutputQueueWithPrioritySubqueues::DequeuePacket(
     PacketPriority& priority,
     EtherTypeField& etherType)
 {
-    //cout << "prioritydequeue" << endl;//no
     size_t i = outputSubqueues.size() - 1;
     while(true) {
         OutputSubqueueInfoType& queueInfo = outputSubqueues.at(i);
 
-        //if (!queueInfo.fifoQueue.empty()) {
-        if (!queueInfo.priorityQueue.empty()) {
+        if (!queueInfo.fifoQueue.empty()) {
 
             priority = PacketPriority(i);
             SimTime notUsed1;
@@ -1153,23 +1099,32 @@ void OutputQueueWithPrioritySubqueues::DequeueLifetimeExpiredPackets(
     const SimTime& packetsInsertedBeforeTime,
     vector<ExpiredPacketInfoType>& packetList)
 {
+    const SimTime currentTime = simEngineInterfacePtr->CurrentTime();
+    const NodeId theNodeId = simEngineInterfacePtr->GetNodeId();
+
     packetList.clear();
     OutputSubqueueInfoType& queueInfo = outputSubqueues.at(priority);
 
     if (!nextHopSpecificQueuesAreEnabled) {
 
-        while((!queueInfo./*fifoQueue*/priorityQueue.empty()) &&
-            (queueInfo./*fifoQueue*/priorityQueue.front()->queueInsertionTime < packetsInsertedBeforeTime)) {
+        while((!queueInfo.fifoQueue.empty()) &&
+            (queueInfo.fifoQueue.front()->queueInsertionTime < packetsInsertedBeforeTime)) {
 
-            OutputQueueRecordType& info = *queueInfo./*fifoQueue*/priorityQueue.front();
+            OutputQueueRecordType& info = *queueInfo.fifoQueue.front();
 
             queueInfo.currentNumberBytes -= info.packetPtr->LengthBytes();
             totalPackets--;
             totalPacketBytes -= info.packetPtr->LengthBytes();
 
+            //cout << "expire: " << (int)priority << ", size: " << info.packetPtr->LengthBytes() << endl;
+            expireCount[theNodeId]++;
+            if(currentTime >= 109000000000 && r3flag == 0){
+                cout << "expireCount: " << expireCount[theNodeId] << ", at: " << theNodeId << endl;
+                r3flag = 1;
+            }
+
             packetList.push_back(ExpiredPacketInfoType(info.packetPtr, info.nextHopAddress));
-            queueInfo./*fifoQueue*/priorityQueue.pop_front();
-            //cout << "DequeueLifetimeExpiredPackets1" << endl;//no
+            queueInfo.fifoQueue.pop_front();
 
         }//while//
     }
@@ -1191,22 +1146,18 @@ void OutputQueueWithPrioritySubqueues::DequeueLifetimeExpiredPackets(
                 totalPacketBytes -= record.packetPtr->LengthBytes();
 
                 packetList.push_back(ExpiredPacketInfoType(record.packetPtr, record.nextHopAddress));
-                queueInfo./*fifoQueue*/priorityQueue.pop_front();
-                //cout << "DequeueLifetimeExpiredPackets2" << endl;//no
+                queueInfo.fifoQueue.pop_front();
 
             }//for//
         }//for//
 
         // Cleanup
 
-        while((!queueInfo./*fifoQueue*/priorityQueue.empty()) && (queueInfo./*fifoQueue*/priorityQueue.front()->packetPtr == nullptr)) {
-            queueInfo./*fifoQueue*/priorityQueue.pop_front();
-            //cout << "DequeueLifetimeExpiredPackets3" << endl;//no
+        while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
+            queueInfo.fifoQueue.pop_front();
         }//while//
 
     }//if//
-
-    //cout << "DequeueLifetimeExpiredPackets" << endl;//no
 
 }//DequeueLifetimeExpiredPackets//
 
@@ -1268,12 +1219,9 @@ void OutputQueueWithPrioritySubqueues::DeletePacketsBySequenceNumber(
 
     // Cleanup
 
-    while((!queueInfo./*fifoQueue*/priorityQueue.empty()) && (queueInfo./*fifoQueue*/priorityQueue.front()->packetPtr == nullptr)) {
-        queueInfo./*fifoQueue*/priorityQueue.pop_front();
-        //cout << "DeletePacketsBySequenceNumber" << endl;//no
+    while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
+        queueInfo.fifoQueue.pop_front();
     }//while//
-
-    //cout << "DeletePacketsBySequenceNumber" << endl;//no
 
 }//DeletePacketsBySequenceNumber//
 
@@ -1514,8 +1462,6 @@ void BasicOutputQueueWithPrioritySubqueues::Insert(
     unique_ptr<Packet>& packetToDrop,
     const EtherTypeField etherType)
 {
-    //cout << "Insert2" << endl;//no
-    
     assert(priority <= maximumPriority);
 
     OutputSubqueueInfo& queueInfo = outputSubqueues.at(priority);
@@ -1549,7 +1495,6 @@ void BasicOutputQueueWithPrioritySubqueues::DequeuePacket(
     PacketPriority& priority,
     EtherTypeField& etherType)
 {
-    //cout << "basic_priority" << endl;//no
     size_t i = outputSubqueues.size() - 1;
     while(true) {
         OutputSubqueueInfo& queueInfo = outputSubqueues.at(i);
@@ -1895,8 +1840,6 @@ void OutputQueueWithPrioritySubqueuesOlderVer::Insert(
     unique_ptr<Packet>& packetToDrop,
     const EtherTypeField etherType)
 {
-    //cout << "Insert3" << endl;//no
-
     assert(priority <= maximumPriority);
 
     OutputSubqueueInfoType& queueInfo = outputSubqueues.at(priority);
@@ -1998,7 +1941,8 @@ void OutputQueueWithPrioritySubqueuesOlderVer::DequeuePacketWithPriority(
     }//if//
 
     queueInfo.fifoQueue.pop_front();
-    //cout << "DequeuePacketWithPriority_old" << endl;//no
+
+    //cout << "queuePacketPtr: " << packetPtr << endl;
 
     queueInfo.currentNumberBytes -= packetPtr->LengthBytes();
     totalPackets--;
@@ -2065,7 +2009,6 @@ void OutputQueueWithPrioritySubqueuesOlderVer::DequeuePacketWithPriorityAndNextH
 
     while((!queueInfo.fifoQueue.empty()) && (queueInfo.fifoQueue.front()->packetPtr == nullptr)) {
         queueInfo.fifoQueue.pop_front();
-        //cout << "DequeuePacketWithPriorityAndNextHop_old" << endl;//no
     }//while//
 
 }//DequeuePacketWithPriorityAndNextHop//
@@ -2078,7 +2021,6 @@ void OutputQueueWithPrioritySubqueuesOlderVer::DequeuePacket(
     PacketPriority& priority,
     EtherTypeField& etherType)
 {
-    //cout << "older" << endl;//no
     size_t i = outputSubqueues.size() - 1;
     while(true) {
         OutputSubqueueInfoType& queueInfo = outputSubqueues.at(i);

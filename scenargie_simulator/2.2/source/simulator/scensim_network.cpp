@@ -825,7 +825,7 @@ void BasicNetworkLayer::InsertPacketIntoAnOutputQueue(
     const EtherTypeField etherType)
 {
     //insert queue
-    //cout << "InsertPacketIntoAnOutputQueue" << endl;
+    //cout << "InsertPacketIntoAnOutputQueue: " << theNodeId << endl;
     
     NetworkInterfaceInfoType interface = networkInterfaces.at(interfaceIndex);
 
@@ -870,6 +870,7 @@ void BasicNetworkLayer::InsertPacketIntoAnOutputQueue(
     if (!outputQueue.InsertWithFullPacketInformationModeIsOn()) {
         //insert queue
         outputQueue.Insert(packetPtr, nextHopAddress, trafficClass, enqueueResult, packetToDropPtr, etherType);
+        //outputQueue.Insert(packetPtr, nextHopAddress, trafficClass, enqueueResult, packetToDropPtr, etherType, theNodeId);
         //cout << "insert_before_1" << endl;//yes
     }
     else {

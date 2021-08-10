@@ -1453,7 +1453,9 @@ public:
 
 class Dot11Phy {
 public:
-    std::map<int, double> channelBusyRatio_phy, totalBusyChannelTime_before, totalIdleChannelTime_before, busy_increase, idle_increase;
+    double channelBusyRatio_phy;
+    long long int totalBusyChannelTime_before, totalIdleChannelTime_before, currentTime_before, busy_increase, idle_increase;
+    int CBR_count;
     
     //static double totalBusyChannelTime_before, totalIdleChannelTime_before;
     //static double busy_increase, idle_increase;
@@ -2223,6 +2225,8 @@ private:
     void ProcessStatsForTransitionToBusyChannel();
     void ProcessStatsForTransitionToIdleChannel();
 
+    //void updateCBR();
+
     void DiscardOldestMovingAverageRecord();
 
     unsigned int GetFirstChannelNumberForChannelBandwidth(
@@ -2830,12 +2834,19 @@ SimTime Dot11Phy::CalculateAggregateFrameTransmitDuration(
 }//CalculateAggregateFrameTransmitDuration//
 
 
+//dcc
+/*inline
+void Dot11Phy::updateCBR(){
+    const SimTime currentTime = simulationEngineInterfacePtr->CurrentTime();
 
+}*/
+//dcc
 
 
 inline
 void Dot11Phy::ProcessStatsForTxStartingStateTransition()
 {
+    //cout << "nodeId: " << theNodeId << endl;
     const SimTime currentTime = simulationEngineInterfacePtr->CurrentTime();
     if (currentlySensingBusyMedium) {
         (*this).totalBusyChannelTime += (currentTime - lastChannelStateTransitionTime);
@@ -2843,24 +2854,76 @@ void Dot11Phy::ProcessStatsForTxStartingStateTransition()
     else {
         (*this).totalIdleChannelTime += (currentTime - lastChannelStateTransitionTime);
     }//if//
+    //cout << "busytime(ProcessStatsForTxStartingStateTransition): " << (*this).totalBusyChannelTime << endl;
+    //cout << "idletime(ProcessStatsForTxStartingStateTransition): " << (*this).totalIdleChannelTime << endl;
+    
+    //(*this).updateCBR((*this).totalBusyChannelTime, (*this).totalIdleChannelTime);
 
     (*this).lastChannelStateTransitionTime = currentTime;
+    //dcc
+    
+    //cout << "nodeId: " << theNodeId << ", current: " << currentTime << ", current_before: " << currentTime_before << endl;
+    if(CBR_count == 0){
+           totalBusyChannelTime_before = (*this).totalBusyChannelTime;
+           totalIdleChannelTime_before = (*this).totalIdleChannelTime;
+           currentTime_before = currentTime;
+           channelBusyRatio_phy = 0;
+           CBR_count = 1;
+    }else{
+        busy_increase = totalBusyChannelTime - totalBusyChannelTime_before;//every 100ms
+        idle_increase = totalIdleChannelTime - totalIdleChannelTime_before; 
+        if(busy_increase + idle_increase > 0){
+            channelBusyRatio_phy = (double)busy_increase / (double)(busy_increase + idle_increase);
+        }
+        totalBusyChannelTime_before = (*this).totalBusyChannelTime;
+        totalIdleChannelTime_before = (*this).totalIdleChannelTime;
+        currentTime_before = currentTime;
+    }
+    if(channelBusyRatio_phy < 0){
+        channelBusyRatio_phy = 0;
+    }
+
+    /*if(CBR_count == 0){
+           totalBusyChannelTime_before = (*this).totalBusyChannelTime;
+           totalIdleChannelTime_before = (*this).totalIdleChannelTime;
+           currentTime_before = currentTime;
+           channelBusyRatio_phy = 0;
+           cout << "nodeId: " << theNodeId << ", channelBusyRatio_phy: " << channelBusyRatio_phy << endl;
+    }else{
+        cout << "current: " << currentTime << ", current_before: " << currentTime_before << endl; 
+        if(currentTime - currentTime_before >= 100000000){
+            busy_increase = (*this).totalBusyChannelTime - totalBusyChannelTime_before;
+            idle_increase = (*this).totalIdleChannelTime - totalIdleChannelTime_before; 
+            if(busy_increase + idle_increase > 0){
+                channelBusyRatio_phy = busy_increase / (busy_increase + idle_increase);
+            }
+            totalBusyChannelTime_before = (*this).totalBusyChannelTime;
+            totalIdleChannelTime_before = (*this).totalIdleChannelTime;
+            currentTime_before = currentTime;
+            cout << "nodeId: " << theNodeId << ", channelBusyRatio_phy: " << channelBusyRatio_phy << endl;
+        }else{
+            cout << "nodeid: short" << endl;
+        }
+    }
+    if(channelBusyRatio_phy < 0){
+        channelBusyRatio_phy = 0;
+    }
+    CBR_count++;*/
+
     //double channelBusyRatio;
-    //static double totalBusyChannelTime_before, totalIdleChannelTime_before;
-    //static double busy_increase, idle_increase;
     //cout << "cbr0: " << channelBusyRatio << endl;
     //cout << "busytime_phy: " << totalBusyChannelTime << endl;
     //cout << "idletime1_phy: " << totalIdleChannelTime << endl;
     //cout << "time: " << currentTime << endl;
-    //channelBusyRatio_phy = (double)totalBusyChannelTime * 100 / (double)(totalBusyChannelTime + totalIdleChannelTime - 10134817000);
-    busy_increase[theNodeId] = totalBusyChannelTime - totalBusyChannelTime_before[theNodeId];
-    idle_increase[theNodeId] = totalIdleChannelTime - totalIdleChannelTime_before[theNodeId];
+    //channelBusyRatio_phy = (double)totalBusyChannelTime * 100 / (double)(totalBusyChannelTime + totalIdleChannelTime);
+    //busy_increase = totalBusyChannelTime - totalBusyChannelTime_before;//every 100ms
+    //idle_increase = totalIdleChannelTime - totalIdleChannelTime_before;
     //cout << "busy_increase: " << totalBusyChannelTime - totalBusyChannelTime_before << endl;
     //cout << "idle_increase: " << totalIdleChannelTime - totalIdleChannelTime_before << endl;
     //cout << "id: " << theNodeId << ", busy: " << totalBusyChannelTime << ", idle: " << totalIdleChannelTime << endl;
-    if(idle_increase[theNodeId] > 0){
-        channelBusyRatio_phy[theNodeId] = busy_increase[theNodeId] * 100 / (busy_increase[theNodeId] + idle_increase[theNodeId]);
-    }
+    /*if(busy_increase + idle_increase > 0){
+        channelBusyRatio_phy = busy_increase * 100 / (busy_increase + idle_increase);
+    }*/
     /*if(theNodeId == 1){
         cout << "totalBusyChannelTime_before: " << totalBusyChannelTime_before[theNodeId] << endl;
         cout << "totalBusyChannelTime: " << totalBusyChannelTime << endl;
@@ -2869,8 +2932,9 @@ void Dot11Phy::ProcessStatsForTxStartingStateTransition()
         cout << "totalIdleChannelTime: " << totalIdleChannelTime << endl;
         cout << endl;    
     }*/
-    totalBusyChannelTime_before[theNodeId] = totalBusyChannelTime;
-    totalIdleChannelTime_before[theNodeId] = totalIdleChannelTime;
+    /*totalBusyChannelTime_before = totalBusyChannelTime;
+    totalIdleChannelTime_before = totalIdleChannelTime;
+    CBR_count++;*/
     /*cout << "totalBusyChannelTime_before: " << totalBusyChannelTime_before[theNodeId] << endl;
     cout << "totalIdleChannelTime_before: " << totalIdleChannelTime_before[theNodeId] << endl;
     cout << "totalBusyChannelTime: " << totalBusyChannelTime << endl;
@@ -5646,6 +5710,8 @@ void Dot11Phy::ProcessStatsForEndCurrentTransmission()
     const SimTime currentTime = simulationEngineInterfacePtr->CurrentTime();
 
     (*this).totalTransmissionTime += (currentTime - lastChannelStateTransitionTime);
+    //cout << "transmissiontime(ProcessStatsForEndCurrentTransmission): " << (*this).totalTransmissionTime << endl;
+    //(*this).updateCBR((*this).totalBusyChannelTime, (*this).totalIdleChannelTime);
     (*this).lastChannelStateTransitionTime = currentTime;
 }
 
@@ -5691,7 +5757,14 @@ void Dot11Phy::ProcessStatsForTransitionToBusyChannel()
 {
     const SimTime currentTime = simulationEngineInterfacePtr->CurrentTime();
 
+    //cout << "idletime(ProcessStatsForTransitionToBusyChannel)(before): " << (*this).totalIdleChannelTime << endl;
+    //cout << "currenttime(ProcessStatsForTransitionToBusyChannel)(before): " << currentTime << endl;
+    //cout << "TransitionTime(ProcessStatsForTransitionToBusyChannel)(before): " << lastChannelStateTransitionTime << endl;
     (*this).totalIdleChannelTime += (currentTime - lastChannelStateTransitionTime);
+    //cout << "idletime(ProcessStatsForTransitionToBusyChannel)(after): " << (*this).totalIdleChannelTime << endl;
+    //cout << "currenttime(ProcessStatsForTransitionToBusyChannel)(after): " << currentTime << endl;
+    //cout << "TransitionTime(ProcessStatsForTransitionToBusyChannel)(after): " << lastChannelStateTransitionTime << endl;
+    //(*this).updateCBR((*this).totalBusyChannelTime, (*this).totalIdleChannelTime);
     (*this).lastChannelStateTransitionTime = currentTime;
 }
 
@@ -5700,7 +5773,14 @@ void Dot11Phy::ProcessStatsForTransitionToIdleChannel()
 {
     const SimTime currentTime = simulationEngineInterfacePtr->CurrentTime();
 
+    //cout << "busytime(ProcessStatsForTransitionToBusyChannel)(before): " << (*this).totalBusyChannelTime << endl;
+    //cout << "currenttime(ProcessStatsForTransitionToBusyChannel)(before): " << currentTime << endl;
+    //cout << "TransitionTime(ProcessStatsForTransitionToBusyChannel)(before): " << lastChannelStateTransitionTime << endl;
     (*this).totalBusyChannelTime += (currentTime - lastChannelStateTransitionTime);
+    //(*this).updateCBR((*this).totalBusyChannelTime, (*this).totalIdleChannelTime);
+    //cout << "busytime(ProcessStatsForTransitionToIdleChannel)(after): " << (*this).totalBusyChannelTime << endl;
+    //cout << "currenttime(ProcessStatsForTransitionToBusyChannel)(after): " << currentTime << endl;
+    //cout << "TransitionTime(ProcessStatsForTransitionToBusyChannel)(after): " << lastChannelStateTransitionTime << endl;
     (*this).lastChannelStateTransitionTime = currentTime;
 
 }

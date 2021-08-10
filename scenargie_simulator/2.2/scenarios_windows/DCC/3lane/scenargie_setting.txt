@@ -1,0 +1,5 @@
+license-server=ss.spacetime-eng.com
+account-id=100211
+
+password=sFQ3W+5K96ZhwJ95CJTy0w==
+email=shigeno@mos.ics.keio.ac.jp

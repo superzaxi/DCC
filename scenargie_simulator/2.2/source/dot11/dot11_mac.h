@@ -666,28 +666,6 @@ public:
     shared_ptr<MacAndPhyInfoInterface> GetMacAndPhyInfoInterface() const
         { return physicalLayer.GetDot11InfoInterface(); }
 
-    //dcc
-    double GetCBR(const NodeId& theNodeId){
-        //int totalBusyChannelTime, totalIdleChannelTime;
-        double channelBusyRatio;
-        //totalBusyChannelTime = physicalLayer.GetTotalBusyChannelTime() - 568000;
-        //totalIdleChannelTime = physicalLayer.GetTotalIdleChannelTime() - 1544886331;
-        //channelBusyRatio = (double)totalBusyChannelTime * 100 / (double)(totalBusyChannelTime + totalIdleChannelTime);
-        channelBusyRatio = physicalLayer.channelBusyRatio_phy[theNodeId];
-        //cout << "busy: " << totalBusyChannelTime << endl;
-        //cout << "idle: " << channelBusyRatio << endl;
-        //cout << "cbr_before: " << channelBusyRatio << endl;
-        return channelBusyRatio;
-    }
-
-    /*int getBusyTime(const NodeId& theNodeId){
-        int busyTime;
-        busyTime = physicalLayer.busy_increase[theNodeId];
-        return busyTime;
-    }*/
-    //SimTime GetTotalBusyChannelTime() const {return (physicalLayer.GetTotalBusyChannelTime());}
-    //20210525
-
     // Network Layer Interface:
 
     virtual void NetworkLayerQueueChangeNotification() override;
@@ -804,6 +782,11 @@ public:
 
     unsigned int GetMaxNumMimoSpatialStreams() const;
 
+    double getCBR(){
+        //cout << "macCBR: " << physicalLayer.channelBusyRatio_phy << endl;
+        return physicalLayer.channelBusyRatio_phy;
+    };
+
 private:
 
     Dot11Mac(
@@ -824,7 +807,7 @@ private:
         const RandomNumberGeneratorSeed& nodeSeed);
 
     //---------------------------------------------------------------
-
+    
     shared_ptr<SimulationEngineInterface> simEngineInterfacePtr;
     NodeId theNodeId;
     InterfaceId theInterfaceId;
@@ -880,6 +863,21 @@ private:
     unique_ptr<MacAddressResolver<MacAddress> > theMacAddressResolverPtr;
 
     unique_ptr<Dot11MacAccessPointScheduler> macSchedulerPtr;
+
+    //-----------------------------------------------------
+
+    //dcc
+    /*std::map <SimTime, long int> packetSizeforDCC;
+    SimTime DCCduration_before = 488000;
+    SimTime currentTime_before = 0;
+    double delta = 0; 
+    int status = 0;
+    int adaptiveCount = 0;
+    double averageChannelBusyRatio = 0;
+    double CBR_L_0_Hop_Previous = 0;
+    SimTime get_duration();
+    SimTime calcReactiveSendRate();
+    double calcAdaptiveSendRate();*/
 
     //-----------------------------------------------------
 
@@ -2644,6 +2642,9 @@ void Dot11Mac::ScheduleWakeupTimer(const SimTime& wakeupTime)
 {
     (*this).currentWakeupTimerExpirationTime = wakeupTime;
 
+    //dcc
+    //cout << "currentTime: " << simEngineInterfacePtr->CurrentTime() << endl;
+
     if (wakeupTimerEventTicket.IsNull()) {
         simEngineInterfacePtr->ScheduleEvent(
             wakeupTimerEventPtr, wakeupTime, wakeupTimerEventTicket);
@@ -2813,6 +2814,269 @@ SimTime Dot11Mac::CurrentBackoffExpirationTime() const
 
 }//CurrentBackoffExpirationTime//
 
+//dcc
+/*inline
+SimTime Dot11Mac::get_duration(){
+    SimTime calcDuration = 0, Toff = 0;
+    double delta;
+    const SimTime currentTime = simEngineInterfacePtr->CurrentTime();
+    const long long int dataRate = 6000000;
+    const long long int calcInterval = 100000000;
+    long long int total_packet_size = 0;
+    //reactive
+    //Toff = calcReactiveSendRate();
+    //reactive
+
+    //adaptive
+    delta = calcAdaptiveSendRate();
+    //cout << "delta: " << delta << endl;
+    //adaptive
+
+    auto begin = packetSizeforDCC.begin(), end = packetSizeforDCC.end();
+    for (auto iter = begin; iter != end; iter++){
+        if(iter->first + calcInterval < currentTime){
+            //cout << "erase: " << iter->first << endl;
+            packetSizeforDCC.erase(iter->first);
+        }else{
+            total_packet_size += iter->second;
+            cout << "packetsize_sum: " << total_packet_size << endl;
+        }
+    }*/
+
+    //reactive
+    //calcDuration = Toff + total_packet_size * 8/*byte to bit*/ * (1000000000 / 1000000) / (dataRate / 1000000) - calcInterval;//to prevent overflow
+    //cout << "else: " << total_packet_size * 8/*byte to bit*/ * 1000000000 / dataRate << endl;
+    //cout << "calcDuration: " << calcDuration << ", Toff: " << Toff << ", total_packet_size: " << total_packet_size << ", dataRate: " << dataRate << ", calcInterval: " << calcInterval << endl;
+    //reactive
+
+    //adaptive
+    //calcDuration = total_packet_size * 8/*byte to bit*/ * (1000000000 / 1000000) / (dataRate / 1000000) / delta - calcInterval;
+    //adaptive
+
+    /*return calcDuration;
+}
+//dcc
+
+//dcc reactive
+inline
+SimTime Dot11Mac::calcReactiveSendRate(){
+    double channelBusyRatio;
+    SimTime calcToff;
+    channelBusyRatio = physicalLayer.channelBusyRatio_phy;
+    //cout << "CBR: " << channelBusyRatio << endl;
+    if(status == 0){
+        if(channelBusyRatio >= 0.3){
+            status = 1;
+        }
+    }else if(status == 1){
+        if(channelBusyRatio >= 0.4){
+            status = 2;
+        }else if(channelBusyRatio < 0.3){
+            status = 0;
+        }
+    }else if(status == 2){
+        if(channelBusyRatio >= 0.5){
+            status = 3;
+        }else if(channelBusyRatio < 0.4){
+            status = 1;
+        }
+    }else if(status == 3){
+        if(channelBusyRatio > 0.6){
+            status = 4;
+        }else if(channelBusyRatio < 0.5){
+            status = 2;
+        }
+    }else if(status == 4){
+        if(channelBusyRatio <= 0.6){
+            status = 3;
+        }
+    }
+    //Ton_max = 1ms
+    if(status == 0){
+        calcToff = 100000000;
+    }else if(status == 1){
+        calcToff = 200000000;
+    }else if(status == 2){
+        calcToff = 400000000;
+    }else if(status == 3){
+        calcToff = 500000000;
+    }else if(status == 4){
+        calcToff = 1000000000;
+    }
+    //cout << "calcToff: " << calcToff << endl;
+    return calcToff;
+}
+
+//dcc adaptive
+inline
+double Dot11Mac::calcAdaptiveSendRate(){
+    //dcc
+    double channelBusyRatio, offset;
+    double calcDelta = 0;
+
+    const double A = 0.016;//LIMERIC
+    const double B = 0.0012;//LIMERIC
+    const double target = 0.68;//LIMERIC
+    const double delta_max = 0.03;
+    const double delta_min = 0.0006;
+    const double gplus = 0.0005;
+    const double gminus = -0.00025;
+    const int nodeNum = 9; 
+    channelBusyRatio = physicalLayer.channelBusyRatio_phy;
+
+    //LIMERIC
+    if(adaptiveCount == 0){
+        averageChannelBusyRatio = channelBusyRatio;
+        CBR_L_0_Hop_Previous = channelBusyRatio;
+    }else if(adaptiveCount >= 1){
+        averageChannelBusyRatio = 0.5 * averageChannelBusyRatio + 0.5 * (channelBusyRatio + CBR_L_0_Hop_Previous) / 2;
+        CBR_L_0_Hop_Previous = channelBusyRatio;
+    }else{
+        //cout << "error" << endl;
+    }
+    if(target - averageChannelBusyRatio > 0){
+        offset = std::min(B * (target - averageChannelBusyRatio), gplus);
+    }else{
+        offset = std::max(B * (target - averageChannelBusyRatio), gminus);
+    }
+    delta = (1 - A) * delta + offset;
+    if(delta > delta_max){
+        delta = delta_max;
+    }
+    if(delta < delta_min){
+        delta = delta_min;
+    }
+    calcDelta = delta;
+    adaptiveCount++;*/
+    //busyTime = dot11MacPtr->getBusyTime(theNodeId);
+    //totalBusyTime = dot11MacPtr->getTotalBusyTime(nodeNum);
+    //packetInterval = (1 - A) * busyTime_before + B * (r_g - totalBusyTime_before) 
+
+    //int gateopen_basetime, gateopen_basecount, nextpackettime;
+    //double calcDelta = 0;
+    //double averageChannelBusyRatio = 0;
+    //int i, status, openflag /*CBR_L_0_Hop,*//* CBR_L_0_Hop_Previous*/;
+    //static map<int, long long int> currentTime_before, gateopen_basetime, gateopen_basecount, nextpackettime;
+    //static int totalBusyTime, totalBusyChannelTime_before;
+    //shared_ptr<NetworkLayer> networkLayerPtr = transportLayerPtr->GetNetworkLayerPtr();
+    //shared_ptr<MacLayer> macLayerPtr = networkLayerPtr->GetMacLayerPtr(0);
+    //shared_ptr<Dot11::Dot11Mac> dot11MacPtr = std::dynamic_pointer_cast<Dot11::Dot11Mac>(macLayerPtr); 
+    //0:Relaxed, 1:Active1, 2:Active2, 3:Active3, 4:Restrictive
+    //const double A = 0.016;//LIMERIC
+    //const double B = 0.0012;//LIMERIC
+    //const double target = 0.68;//LIMERIC
+    //const double delta_max = 0.03;
+    //const double delta_min = 0.0006;
+    //const double gplus = 0.0005;
+    //const double gminus = -0.00025;
+    //const int nodeNum = 9; 
+    //channelBusyRatio = getCBR();
+    //20210526
+    //cout << "time: " << currentTime << endl;
+    //cout << "interval: " << packetInterval << endl;
+    
+    //reactive
+    /*if(i[theNodeId] == 0){
+        status = 0;
+        gateopen_basecount[theNodeId] = i[theNodeId];
+        gateopen_basetime[theNodeId] = currentTime;
+        //cout << "first, nodeid: " << theNodeId << ", currenttime: " << currentTime << endl;
+        //cout << "basetime: " << gateopen_basetime[theNodeId] << endl;//wrong
+        openflag[theNodeId] = 1;
+    }*/
+    //cout << "status_before: " << status << endl;
+    
+    //cout << "nextpackettime: " << nextpackettime[theNodeId] << endl;
+    /*if(theNodeId == 65){
+        cout << "openflag: " << openflag[theNodeId] << endl;
+        cout << "i: " << i[theNodeId] << endl;
+        cout << "basecount: " << gateopen_basecount[theNodeId] << endl;
+        cout << "basetime: " << gateopen_basetime[theNodeId] << endl;
+        cout << "nextpackettime: " << nextpackettime[theNodeId] << endl;
+        cout << "currenttime: " << currentTime << endl;
+    }*/
+    /*if(openflag[theNodeId] == 1 && currentTime - gateopen_basetime[theNodeId] >= 1000000){
+        openflag[theNodeId] = 0;
+        cout << "gate close at node: " << theNodeId << endl;
+    }*///gate close
+    /*if(nextpackettime[theNodeId] <= currentTime - gateopen_basetime[theNodeId]){
+        gateopen_basecount[theNodeId] = i[theNodeId];
+        gateopen_basetime[theNodeId] = currentTime;
+        openflag[theNodeId] = 1;
+        cout << "gate open at node: " << theNodeId << endl;
+    }*///gate open
+    /*if(openflag[theNodeId] == 1){
+        networkOutputQueuePtr->DequeuePacketWithPriority(
+            priority,
+            (*this).currentPacketPtr,
+            (*this).currentPacketsNextHopNetworkAddress,
+            (*this).currentPacketsEtherType,
+            (*this).currentPacketsQueueInsertionTime,
+            isANewPacket,
+            (*this).currentPacketsRetryTxCount,
+            (*this).currentPacketsSequenceNumber);
+    }*/
+    /*if(currentTime >= gateopen_basetime[theNodeId] + nextpackettime[theNodeId]){
+            networkOutputQueuePtr->DequeuePacketWithPriority(
+                priority,
+                (*this).currentPacketPtr,
+                (*this).currentPacketsNextHopNetworkAddress,
+                (*this).currentPacketsEtherType,
+                (*this).currentPacketsQueueInsertionTime,
+                isANewPacket,
+                (*this).currentPacketsRetryTxCount,
+                (*this).currentPacketsSequenceNumber);
+        }*///gate open
+    /*if(openflag[theNodeId] == 1 && i[theNodeId] == gateopen_basecount[theNodeId] + 1){
+        openflag[theNodeId] = 0;
+        cout << "gate close at node: " << theNodeId << endl; 
+    }//gate close
+    if(currentTime >= gateopen_basetime[theNodeId] + nextpackettime[theNodeId]){
+        gateopen_basecount[theNodeId] = i[theNodeId];
+        gateopen_basetime[theNodeId] = currentTime;
+        openflag[theNodeId] = 1;
+        cout << "gate open at node: " << theNodeId << endl;
+    }*///gate open
+
+    /*cout << "id: " << theNodeId << ", CBR: " << channelBusyRatio << ", interval: " << packetInterval << endl;
+    cout << "status: " << status << endl;
+    cout << "interval: " << packetInterval << endl;*/
+    //cout << "time: " << (double)currentTime / (double)1000000000 << endl;
+    //shared_ptr<NetworkLayer> networkLayerPtr = transportLayerPtr->GetNetworkLayerPtr();
+    /*shared_ptr<NetworkLayer> networkLayerPtr = transportLayerPtr->GetNetworkLayerPtr();
+    cout << "A" << endl;
+    const unsigned int interfaceIndex = networkLayerPtr->LookupInterfaceIndex(0);
+    cout << "B" << endl;
+    shared_ptr<MacLayer> macLayerPtr = networkLayerPtr->GetMacLayerPtr(interfaceIndex);
+    cout << "C" << endl;
+    //cout << "model: " << macLayerPtr->GetCBR() << endl;
+    shared_ptr<MacAndPhyInfoInterface> macAndPhyInfoInterfacePtr =
+        macLayerPtr->GetMacAndPhyInfoInterface();
+    cout << "D" << endl;
+    int busyTime;
+    busyTime = macAndPhyInfoInterfacePtr->GetTotalBusyChannelTime();
+    cout << "busytime: " << busyTime << endl;*/
+    //macLayerPtr->ModelName;
+    //nextpackettimeをいじれば間隔を調整できる？
+    //Dot11Phy dp;
+    //dp.DccReactive();
+    //Dot11::Dot11Phy::DccReactive();
+    //Dot11::Dot11Phy* dp;
+    /*SimTime busyTime;
+    SimTime idleTime;
+    busyTime = dp->GetTotalBusyChannelTime();
+    idleTime = dp->GetTotalIdleChannelTime();*/
+    //cout << "busytime2: " << dp->GetTotalBusyChannelTime() << endl;
+    //cout << "idletime2: " << dp->GetTotalIdleChannelTime() << endl;
+    //cout << "CBR: " << /*dp->*/channelBusyRatio << endl;
+    //cout << "CBR: " << getCBR() << endl;
+    //i[theNodeId]++;
+    //20210520
+    //reactive
+
+    /*return calcDelta;
+}*/
+//dcc
 
 //-------------------------------------------------------------------------------------------------
 
@@ -2834,14 +3098,34 @@ void Dot11Mac::StartBackoffIfNecessary()
     assert(macState != WaitingForIfsAndBackoffState);
 
     const SimTime currentTime = simEngineInterfacePtr->CurrentTime();
-    const SimTime backoffDuration = CurrentBackoffDuration();
+
+    SimTime DCCduration;
+    
+    SimTime backoffDuration = CurrentBackoffDuration();
 
     if (backoffDuration == INFINITE_TIME) {
         macState = IdleState;
         return;
     }//if//
 
+    //dcc
+    //cout << "duration_before: " << backoffDuration << endl;
+    //cout << "currentTime: " << currentTime << ", timebefore: " << currentTime_before << endl;
+    //if(currentTime >= currentTime_before + 100000000){
+        //cout << "duration: " << get_duration() << endl;
+        /*if(get_duration() > backoffDuration){
+            backoffDuration = get_duration();
+        }*/
+        //backoffDuration = get_duration(); //dcc
+    //}
+    //currentTime_before = currentTime;
+    
+    /*if(currentTime >= currentTime_before + 100000000){
+        DCCduration = get_duration();
+    }*/
+    //DCCduration = get_duration();
     macState = WaitingForIfsAndBackoffState;
+    //cout << "macState: " << macState << endl;
 
     for(unsigned int i = 0; (i < accessCategories.size()); i++) {
         EdcaAccessCategoryInfo& accessCategoryInfo = accessCategories[i];
@@ -2852,6 +3136,23 @@ void Dot11Mac::StartBackoffIfNecessary()
             accessCategoryInfo.ifsAndBackoffStartTime = INFINITE_TIME;
         }//if//
     }//for//
+
+    //cout << "currentTime: " << currentTime << ", DCCduration: " << DCCduration << ", backoffduration: " << backoffDuration << endl;
+    
+    /*if(DCCduration > 0){
+        DCCduration_before = DCCduration;
+        (*this).ScheduleWakeupTimer(currentTime + DCCduration);
+        OutputTraceForIfsAndBackoffStart(DCCduration);
+    }else{
+         (*this).ScheduleWakeupTimer(currentTime + DCCduration_before);
+        OutputTraceForIfsAndBackoffStart(DCCduration_before);
+    }*/
+    /*else{
+        (*this).ScheduleWakeupTimer(currentTime + backoffDuration);
+
+        OutputTraceForIfsAndBackoffStart(backoffDuration);
+    }*/
+    //currentTime_before = currentTime;
 
     (*this).ScheduleWakeupTimer(currentTime + backoffDuration);
 
@@ -3563,9 +3864,9 @@ void Dot11Mac::RetrievePacketFromNetworkLayerForAccessCategory(
         bool isANewPacket;
 
         if (!macSchedulerPtr->NonFifoFlowSchedulingModeIsOn()) {
-
-            //cout << "RetrievePacketFromNetworkLayerForAccessCategory" << endl;//yes
-
+            
+            //if(openflag[theNodeId] == 1){
+            
             networkOutputQueuePtr->DequeuePacketWithPriority(
                 priority,
                 (*this).currentPacketPtr,
@@ -3575,6 +3876,7 @@ void Dot11Mac::RetrievePacketFromNetworkLayerForAccessCategory(
                 isANewPacket,
                 (*this).currentPacketsRetryTxCount,
                 (*this).currentPacketsSequenceNumber);
+            //}
         }
         else {
             if ((currentPacketIsForTxopCollisionDetect) &&
@@ -3606,7 +3908,7 @@ void Dot11Mac::RetrievePacketFromNetworkLayerForAccessCategory(
                 (*this).currentPacketsSequenceNumber);
         }//if//
 
-
+        
         (*this).currentPacketsAccessCategoryIndex = priority;
 
         assert((currentPacketsNextHopNetworkAddress.IsTheBroadcastAddress()) ||
@@ -3614,6 +3916,9 @@ void Dot11Mac::RetrievePacketFromNetworkLayerForAccessCategory(
                    networkLayerPtr->GetSubnetMask(interfaceIndex))) &&
                "Make sure no mask dependent broadcast address from network layer");
 
+        /*if((currentTime - currentPacketsQueueInsertionTime) >= accessCategoryInfo.frameLifetime){
+            cout << "currenttime: " << currentTime << ", insertiontime: " << currentPacketsQueueInsertionTime << ", lifetime: " << accessCategoryInfo.frameLifetime << endl;
+        }*/
         assert((currentTime - currentPacketsQueueInsertionTime) <= accessCategoryInfo.frameLifetime);
 
         if (redundantTraceInformationModeIsOn) {
@@ -4644,6 +4949,11 @@ void Dot11Mac::TransmitAFrame(
 
     (*this).currentPacketsAccessCategoryIndex = ConvertToPacketPriority(accessCategoryIndex);
 
+    //dcc
+    assert(packetToSendPtr != nullptr);
+    //packetSizeforDCC[currentTime] = packetToSendPtr->LengthBytes();
+    //cout << "packetsize: " << packetToSendPtr->LengthBytes() << endl;
+
     physicalLayer.TransmitFrame(
         packetToSendPtr,
         txParameters,
@@ -4660,12 +4970,14 @@ inline
 void Dot11Mac::ProcessInterframeSpaceAndBackoffTimeout()
 {
     // Try to send a frame
-
+    
     OutputTraceForIfsAndBackoffExpiration();
 
     assert(macState == WaitingForIfsAndBackoffState);
 
     SimTime currentTime = simEngineInterfacePtr->CurrentTime();
+
+    //cout << "before dequeue time: " << currentTime << endl;
 
     // Go through Access Categories in reverse order (high priority to low priority).
 
